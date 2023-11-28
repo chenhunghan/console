@@ -32,3 +32,5 @@ export type GeneralPageProp = {
   enableQuery: boolean;
   accessToken: Nullable<string>;
 };
+
+export type InstillBillingTier = "free" | "pro" | "team" | "enterprise";
