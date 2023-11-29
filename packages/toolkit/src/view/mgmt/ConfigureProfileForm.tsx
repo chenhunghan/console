@@ -158,7 +158,7 @@ export const ConfigureProfileForm = (props: ConfigureProfileFormProps) => {
   return (
     <Form.Root {...form}>
       <form
-        className="w-full  min-w-[720px] lg:w-[680px]"
+        className="w-full min-w-[720px] lg:w-[680px]"
         onSubmit={form.handleSubmit(handleUpdate)}
       >
         <div className="mb-8 flex flex-col gap-y-6">
