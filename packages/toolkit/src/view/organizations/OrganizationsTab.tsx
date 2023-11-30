@@ -82,7 +82,10 @@ export const OrganizationsTab = (props: OrganizationsTabProps) => {
               {/* Org 1 */}
 
               {organisations.data.map((organisation) => (
-                <div className="rounded-sm border border-[#E4E4E4] p-4" key={organisation.name}>
+                <div
+                  className="rounded-sm border border-[#E4E4E4] p-4"
+                  key={organisation.name}
+                >
                   <div className="flex w-full flex-row">
                     <div className="flex w-3/4 gap-x-3">
                       <div className="my-auto">
@@ -92,7 +95,15 @@ export const OrganizationsTab = (props: OrganizationsTabProps) => {
                             size="lg"
                             className="!p-3.5"
                           >
-                            <Logos.OpenAI className="h-7 w-7" />
+                            {organisation.profile_avatar ? (
+                              <img
+                                src={organisation.profile_avatar}
+                                alt={organisation.id}
+                                className="h-7 w-7"
+                              />
+                            ) : (
+                              <Logos.OpenAI className="h-7 w-7" />
+                            )}
                           </Button>
                         </Link>
                       </div>

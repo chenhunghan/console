@@ -125,9 +125,11 @@ export const Topbar = (props: TopbarProps) => {
                   <Icons.User02 className="h-5 w-5 stroke-slate-500" />
                 </div>
                 <div className="flex flex-col">
-                  <h3 className="product-body-text-3-medium">User Name</h3>
+                  <h3 className="product-body-text-3-medium">
+                    {user.data.first_name} {user.data.last_name}
+                  </h3>
                   <p className="text-semantic-fg-secondary product-body-text-4-regular">
-                    dani.sosa@instill.tech
+                    {user.data.email}
                   </p>
                 </div>
               </DropdownMenu.Item>

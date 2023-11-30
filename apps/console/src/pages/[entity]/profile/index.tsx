@@ -25,6 +25,7 @@ import { ConsoleCorePageHead, Topbar } from "../../../components";
 import { NextPageWithLayout } from "../../_app";
 import { useAccessToken } from "../../../lib/useAccessToken";
 import { useTrackToken } from "../../../lib/useTrackToken";
+import Link from "next/link";
 
 const PipelinePage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -75,14 +76,16 @@ const PipelinePage: NextPageWithLayout = () => {
               <Icons.User02 className="h-[84px] w-[84px] stroke-slate-500" />
             </div>
             <div className="flex flex-col items-center space-y-1">
-              <h3 className="product-headings-heading-3">Dani Sosa</h3>
-              <Tag size="sm">dani-AGI</Tag>
+              <h3 className="product-headings-heading-3">
+                {user.data?.first_name} {user.data?.last_name}
+              </h3>
+              <Tag size="sm">{user.data?.role}</Tag>
             </div>
           </div>
           <div className="space-y-2">
             <h3 className="product-body-text-2-semibold">About</h3>
             <p className="product-body-text-3-regular my-2">
-              Dani Sosa is someone who knows someone somewhere near your house.
+              ...
             </p>
           </div>
           <div>
@@ -97,17 +100,23 @@ const PipelinePage: NextPageWithLayout = () => {
             </div>
             <div className="flex gap-x-2 p-2">
               <Logos.OpenAI className="w-4 h-4 my-auto" />
-              <p className="product-button-button-3 my-auto">Username</p>
+              <p className="product-button-button-3 my-auto">
+                {user.data?.org_name}
+              </p>
             </div>
           </div>
 
           <div className="space-y-2 flex flex-col">
-            <Button variant="secondaryGrey" size="lg">
-              Edit Profile
-            </Button>
-            <Button variant="secondaryGrey" size="lg">
-              Settings
-            </Button>
+            <Link href={"/settings"}>
+              <Button variant="secondaryGrey" size="lg" className="w-full">
+                Edit Profile
+              </Button>
+            </Link>
+            <Link href={"/settings"}>
+              <Button variant="secondaryGrey" size="lg" className="w-full">
+                Settings
+              </Button>
+            </Link>
           </div>
           <div className="space-y-4">
             <h3 className="product-headings-heading-5">Organisations</h3>

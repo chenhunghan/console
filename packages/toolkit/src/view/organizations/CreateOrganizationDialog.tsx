@@ -26,11 +26,14 @@ export type CreateOrganizationDialogProps = {
 const CreateTokenSchema = z.object({
   id: z.string().nonempty(),
   org_name: z.string().nonempty(),
-  homepage: z.nullable(z.string()),
-  github_username: z.nullable(z.string()),
-  twitter_username: z.nullable(z.string()),
-  organization_bio: z.nullable(z.string()),
-  organization_type: z.nullable(z.string()),
+  profile_avatar: z.nullable(z.string()),
+  profile_data: z.object({
+    homepage: z.nullable(z.string()),
+    github_username: z.nullable(z.string()),
+    twitter_username: z.nullable(z.string()),
+    organization_bio: z.nullable(z.string()),
+    organization_type: z.nullable(z.string()),
+  }),
 });
 
 export const CreateOrganizationDialog = (
@@ -40,16 +43,50 @@ export const CreateOrganizationDialog = (
   const { accessToken, onCreate } = props;
   const [isLoading, setIsLoading] = React.useState(false);
 
+  const [imagePreview, setImagePreview] =
+    React.useState<Nullable<string>>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const result = reader.result;
+        if (typeof result === "string") {
+          setImagePreview(result);
+        }
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDelete = () => {
+    setImagePreview(null);
+    // Reset file input value to allow selecting the same file again
+    const fileInput = document.getElementById(
+      "fileInput"
+    ) as HTMLInputElement | null;
+    if (fileInput) {
+      fileInput.value = ""; // This resets the input value
+    }
+  };
+
   const form = useForm<z.infer<typeof CreateTokenSchema>>({
     resolver: zodResolver(CreateTokenSchema),
     defaultValues: {
       id: "",
       org_name: "",
-      homepage: null,
-      github_username: null,
-      twitter_username: null,
-      organization_bio: null,
-      organization_type: null,
+      profile_data: {
+        homepage: null,
+        github_username: null,
+        twitter_username: null,
+        organization_bio: null,
+        organization_type: null,
+      },
+      profile_avatar: null,
     },
   });
 
@@ -59,9 +96,19 @@ export const CreateOrganizationDialog = (
   ) => {
     if (!accessToken) return;
 
+    console.log("data", data);
+
     const payload = {
       id: data.id,
       org_name: data.org_name,
+      profile_avatar: imagePreview,
+      profile_data: {
+        homepage: data.profile_data.homepage,
+        github_username: data.profile_data.github_username,
+        twitter_username: data.profile_data.twitter_username,
+        organization_bio: data.profile_data.organization_bio,
+        organization_type: data.profile_data.organization_type,
+      },
     };
 
     setIsLoading(true);
@@ -74,13 +121,13 @@ export const CreateOrganizationDialog = (
           if (onCreate) {
             onCreate();
           }
-
           toast({
             title: "Organization created!",
             variant: "alert-success",
             size: "small",
           });
-
+          form.reset();
+          handleDelete();
           setOpen(false);
         },
         onError: (err) => {
@@ -191,17 +238,48 @@ export const CreateOrganizationDialog = (
 
             <div className="w-full space-y-3">
               <p className="product-body-text-1-semibold">Upload your logo</p>
-              <div className="my-auto space-y-3 rounded border border-dashed bg-slate-50 px-10 py-10 text-center">
-                <Icons.Upload01 className="mx-auto h-8 w-8 stroke-slate-500" />
-                <p className="mx-auto product-body-text-4-regular">
-                  Drag-and-drop file, or browse computer
-                </p>
+              <div className="my-auto cursor-pointer rounded border border-dashed bg-slate-50 text-center">
+                {imagePreview && (
+                  <Icons.Trash01
+                    onClick={() => handleDelete()}
+                    className="relative top-1 h-10 w-10 stroke-red-500 p-2 text-white"
+                  />
+                )}
+
+                {imagePreview ? (
+                  <div className="pb-5">
+                    <img
+                      src={imagePreview}
+                      alt="Image Preview"
+                      className="mx-auto h-32 w-32 rounded-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <label
+                    htmlFor="fileInput"
+                    className="flex cursor-pointer flex-col"
+                  >
+                    <div className="cursor-pointer space-y-4 px-10 py-10">
+                      <Icons.Upload01 className="mx-auto h-8 w-8 stroke-slate-500" />
+                      <p className="mx-auto product-body-text-4-regular">
+                        Drag-and-drop file, or browse computer
+                      </p>
+                    </div>
+                  </label>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  id="fileInput"
+                  onChange={(e) => handleFileChange(e)}
+                />
               </div>
             </div>
             <div className="flex w-full flex-row gap-x-4">
               <Form.Field
                 control={form.control}
-                name="organization_type"
+                name="profile_data.organization_type"
                 render={({ field }) => {
                   return (
                     <Form.Item className="w-1/2">
@@ -212,28 +290,20 @@ export const CreateOrganizationDialog = (
                         Organization type
                       </Form.Label>
                       <Form.Control>
-                        <Select.Root
-                          value={field?.value || ""}
-                          onValueChange={field.onChange}
-                        >
+                        <Select.Root onValueChange={field.onChange}>
                           <Select.Trigger className="w-full">
-                            <Select.Value placeholder="Select Organization" />
+                            <Select.Value
+                              placeholder="Select Organization"
+                              defaultValue={"company"}
+                            />
                           </Select.Trigger>
                           <Select.Content>
                             <Select.Group>
-                              <Select.Label>Organization 1</Select.Label>
-                              <Select.Item value="organization-1">
-                                Organization
+                              <Select.Item value="company">Company</Select.Item>
+                              <Select.Item value="individual">
+                                Individual
                               </Select.Item>
-                              <Select.Item value="organization-2">
-                                Organization
-                              </Select.Item>
-                              <Select.Item value="organization-3">
-                                Organization
-                              </Select.Item>
-                              <Select.Item value="organization-4">
-                                Organization
-                              </Select.Item>
+                              <Select.Item value="team">Team</Select.Item>
                             </Select.Group>
                           </Select.Content>
                         </Select.Root>
@@ -246,7 +316,7 @@ export const CreateOrganizationDialog = (
 
               <Form.Field
                 control={form.control}
-                name="homepage"
+                name="profile_data.homepage"
                 render={({ field }) => {
                   return (
                     <Form.Item className="w-1/2">
@@ -276,7 +346,7 @@ export const CreateOrganizationDialog = (
             <div className="flex w-full flex-row gap-x-4">
               <Form.Field
                 control={form.control}
-                name="github_username"
+                name="profile_data.github_username"
                 render={({ field }) => {
                   return (
                     <Form.Item className="w-1/2">
@@ -305,7 +375,7 @@ export const CreateOrganizationDialog = (
 
               <Form.Field
                 control={form.control}
-                name="twitter_username"
+                name="profile_data.twitter_username"
                 render={({ field }) => {
                   return (
                     <Form.Item className="w-1/2">
@@ -336,7 +406,7 @@ export const CreateOrganizationDialog = (
             <div className="w-full space-y-2">
               <Form.Field
                 control={form.control}
-                name="organization_bio"
+                name="profile_data.organization_bio"
                 render={({ field }) => {
                   return (
                     <Form.Item className="w-full">
