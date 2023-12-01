@@ -49,7 +49,7 @@ export async function updateOrganizationMutation({
   payload,
   accessToken,
 }: {
-  payload: CreateOrganizationPayload;
+  payload: UpdateOrganizationPayload;
   accessToken: Nullable<string>;
 }) {
   try {
