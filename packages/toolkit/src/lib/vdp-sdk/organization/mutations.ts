@@ -1,12 +1,12 @@
-import { Nullable } from "../../type";
+import { GeneralRecord, Nullable } from "../../type";
 import { createInstillAxiosClient } from "../helper";
 import { Organization } from "./types";
 
 export type CreateOrganizationPayload = {
   id: string;
   org_name: string;
-  profile_avatar: Nullable<string>;
-  profile_data: Nullable<object>;
+  profile_avatar?: Nullable<string>;
+  profile_data?: Nullable<object>;
 };
 
 export type CreateOrganizationResponse = {
@@ -34,6 +34,13 @@ export async function createOrganizationMutation({
   }
 }
 
+export type UpdateOrganizationPayload = {
+  id: string;
+  org_name?: string;
+  profile_avatar?: Nullable<string>;
+  profile_data?: Nullable<GeneralRecord>;
+};
+
 export type UpdateOrganizationResponse = {
   organization: Organization;
 };
@@ -41,18 +48,19 @@ export type UpdateOrganizationResponse = {
 export async function updateOrganizationMutation({
   payload,
   accessToken,
-  organizationName,
 }: {
   payload: CreateOrganizationPayload;
   accessToken: Nullable<string>;
-  organizationName: Nullable<string>;
 }) {
   try {
     const client = createInstillAxiosClient(accessToken, "core");
 
     const { data } = await client.post<UpdateOrganizationResponse>(
-      `/organizations/${organizationName}`,
-      payload
+      `/organizations/${payload.id}`,
+      {
+        ...payload,
+        id: undefined,
+      }
     );
 
     return Promise.resolve(data.organization);
