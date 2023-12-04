@@ -33,7 +33,15 @@ export const OrganizationSidebar = () => {
         <div className="my-auto">
           <Link href={`/organization/${router.query.id}/settings`}>
             <Button variant="secondaryGrey" size="lg" className="!p-3.5">
-              <Logos.OpenAI className="h-7 w-7" />
+              {organization.data?.profile_avatar ? (
+                <img
+                  src={organization.data.profile_avatar}
+                  alt=""
+                  className="h-7 w-7 rounded-full"
+                />
+              ) : (
+                <Logos.OpenAI className="h-7 w-7" />
+              )}
             </Button>
           </Link>
         </div>
@@ -45,7 +53,9 @@ export const OrganizationSidebar = () => {
             </p>
           </Link>
           <p className="text-semantic-fg-disabled product-body-text-4-regular">
-            Company
+            {organization.data?.profile_data
+              ? organization.data.profile_data.organization_type
+              : ""}
           </p>
         </div>
       </div>

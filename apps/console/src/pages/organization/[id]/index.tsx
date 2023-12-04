@@ -87,7 +87,15 @@ const OrganizationPage: NextPageWithLayout = () => {
         }}
       >
         <div className="p-8 rounded-lg bg-white">
-          <Logos.OpenAI className="h-16 w-16" />
+          {organization.data?.profile_avatar ? (
+            <img
+              src={organization.data.profile_avatar}
+              alt=""
+              className="h-16 w-16 rounded-full"
+            />
+          ) : (
+            <Logos.OpenAI className="h-16 w-16" />
+          )}
         </div>
         <div className="flex items-end">
           <div className="space-y-4">
@@ -96,19 +104,28 @@ const OrganizationPage: NextPageWithLayout = () => {
                 {organization.data ? organization.data.org_name : ""}
               </p>
               <Tag size="sm" className="!my-1">
-                Company
+                {organization.data?.profile_data
+                  ? organization.data?.profile_data.organization_type
+                  : ""}
               </Tag>
             </div>
             <div className="flex flex-row gap-x-4">
               <div className="flex flex-row gap-x-2">
                 <Icons.Globe01 className="h-3 w-3 stroke-slate-800 my-auto" />
                 <p className="product-button-button-3 !lowercase my-auto">
-                  www.openai.com
+                  {organization.data?.profile_data
+                    ? organization.data?.profile_data.homepage
+                    : ""}
                 </p>
               </div>
               <div className="flex flex-row gap-x-2">
                 <Logos.TwitterDark className="h-3 w-3 stroke-slate-800 my-auto" />
-                <p className="product-button-button-3 my-auto">Openai</p>
+                <p className="product-button-button-3 my-auto">
+                  {" "}
+                  {organization.data?.profile_data
+                    ? organization.data?.profile_data.twitter_username
+                    : ""}
+                </p>
               </div>
               <div className="flex flex-row gap-x-2">
                 <GitHubIcon
@@ -117,7 +134,11 @@ const OrganizationPage: NextPageWithLayout = () => {
                   position="my-auto"
                   width="w-[16px]"
                 />
-                <p className="my-auto product-button-button-3">Openai</p>
+                <p className="my-auto product-button-button-3">
+                  {organization.data?.profile_data
+                    ? organization.data?.profile_data.github_username
+                    : ""}
+                </p>
               </div>
             </div>
           </div>
@@ -128,10 +149,9 @@ const OrganizationPage: NextPageWithLayout = () => {
           <div>
             <p className="product-body-text-2-semibold mb-2">Biography</p>
             <p className="product-body-text-3-regular">
-              OpenAI researches artificial intelligence with the declared
-              intention of developing safe and beneficial artificial general
-              intelligence, which it defines as highly autonomous systems that
-              outperform humans at most economically valuable work.
+              {organization.data?.profile_data
+                ? organization.data?.profile_data.organization_bio
+                : ""}
             </p>
           </div>
           <div>

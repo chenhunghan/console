@@ -99,7 +99,7 @@ export const OrganizationsTab = (props: OrganizationsTabProps) => {
                               <img
                                 src={organisation.profile_avatar}
                                 alt={organisation.id}
-                                className="h-7 w-7"
+                                className="h-7 w-7 rounded-full"
                               />
                             ) : (
                               <Logos.OpenAI className="h-7 w-7" />
@@ -115,7 +115,7 @@ export const OrganizationsTab = (props: OrganizationsTabProps) => {
                           </p>
                         </Link>
                         <p className="text-semantic-fg-disabled product-body-text-4-regular">
-                          Company
+                          {organisation.profile_data.organization_type}
                         </p>
                       </div>
                     </div>

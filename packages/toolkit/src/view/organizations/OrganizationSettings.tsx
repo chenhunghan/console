@@ -100,10 +100,9 @@ const OrganisationSettingsSchema: InstillJSONSchema = {
 };
 
 const UpdateOrganizationSchema = z.object({
-  id: z.string().nonempty(),
   org_name: z.string().nonempty(),
-  name: z.nullable(z.string()),
-  email: z.nullable(z.string()),
+  homepage: z.nullable(z.string()).optional(),
+  email: z.nullable(z.string()).optional(),
 });
 
 export const OrganizationSettings = (props: OrganizationSettingsProps) => {
@@ -120,22 +119,22 @@ export const OrganizationSettings = (props: OrganizationSettingsProps) => {
 
   const form = useForm<z.infer<typeof UpdateOrganizationSchema>>({
     resolver: zodResolver(UpdateOrganizationSchema),
-    defaultValues: {
-      id: "",
-      org_name: "",
-      name: null,
-      email: null,
-    },
+    defaultValues: {},
   });
 
-  const onSubmit = (data: z.infer<typeof UpdateOrganizationSchema>) => {
+  const handleUpdate = async (
+    data: z.infer<typeof UpdateOrganizationSchema>
+  ) => {
+    console.log("test", data);
+
     if (!accessToken) return;
 
     const payload = {
-      id: data.id,
       org_name: data.org_name,
-      name: null,
-      email: null,
+      profile_data: {
+        email: data.email,
+        homepage: data.homepage,
+      },
     };
 
     updateOrganization.mutate(
@@ -182,7 +181,7 @@ export const OrganizationSettings = (props: OrganizationSettingsProps) => {
         <Form.Root {...form}>
           <form
             className="w-full space-y-3"
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit(handleUpdate)}
           >
             <Form.Field
               control={form.control}
@@ -190,10 +189,7 @@ export const OrganizationSettings = (props: OrganizationSettingsProps) => {
               render={({ field }) => {
                 return (
                   <Form.Item className="w-full">
-                    <Form.Label
-                      htmlFor={field.name}
-                      className=""
-                    >
+                    <Form.Label htmlFor={field.name} className="">
                       Organization username
                     </Form.Label>
                     <Form.Control>
@@ -219,10 +215,7 @@ export const OrganizationSettings = (props: OrganizationSettingsProps) => {
               render={({ field }) => {
                 return (
                   <Form.Item className="w-full">
-                    <Form.Label
-                      htmlFor={field.name}
-                      className=""
-                    >
+                    <Form.Label htmlFor={field.name} className="">
                       Email
                     </Form.Label>
                     <Form.Control>
@@ -244,14 +237,11 @@ export const OrganizationSettings = (props: OrganizationSettingsProps) => {
             />
             <Form.Field
               control={form.control}
-              name="name"
+              name="homepage"
               render={({ field }) => {
                 return (
                   <Form.Item className="w-full">
-                    <Form.Label
-                      htmlFor={field.name}
-                      className=""
-                    >
+                    <Form.Label htmlFor={field.name} className="">
                       Organisation Domain Name
                     </Form.Label>
                     <Form.Control>
@@ -273,7 +263,7 @@ export const OrganizationSettings = (props: OrganizationSettingsProps) => {
             />
             {disabledAll === false ? (
               <div className="flex flex-row-reverse pt-1">
-                <Button type="submit" size="lg" variant="primary">
+                <Button size="lg" variant="primary" type="submit">
                   Submit
                 </Button>
               </div>
