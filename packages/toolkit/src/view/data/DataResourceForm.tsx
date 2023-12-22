@@ -188,8 +188,14 @@ export const DataResourceForm = (props: DataResourceFormProps) => {
 
             const removeConfigurationPrefixPath = pathList.join(".");
             errors[removeConfigurationPrefixPath] = message;
+            toast({
+              title: `${removeConfigurationPrefixPath} - ${message}`,
+              variant: "alert-error",
+              size: "small",
+            });
           }
         }
+
         setFieldErrors(errors);
       }
 
